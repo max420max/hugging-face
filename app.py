@@ -29,7 +29,7 @@ def get_llm_hf_inference(model_id=model_id, max_new_tokens=128, temperature=0.1)
 
 # Configure the Streamlit app
 st.set_page_config(page_title="HuggingFace ChatBot", page_icon="🤗")
-st.title("Personal HuggingFace ChatBot")
+st.title("Private ChatBot")
 st.markdown(f"*This is a simple chatbot that uses the HuggingFace transformers library to generate responses to your text input. It uses the {model_id}.*")
 
 # Initialize session state for avatars
