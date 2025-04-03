@@ -33,7 +33,7 @@ st.set_page_config(page_title="HuggingFace ChatBot", page_icon="🤗")
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.image("chatbot.png", width=950)  # Adjust width or path if needed
-st.title("<IDE> Personal ChatBot")
+st.title("Personal ChatBot")
 st.markdown(f"*This is a simple chatbot that uses the HuggingFace transformers library to generate responses to your text input. It uses the {model_id}.*")
 
 # Initialize session state for avatars
