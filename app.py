@@ -1,59 +1,22 @@
-import streamlit as st 
-from llama_index import (
-  SimpleDirectoryReader,
-  VectorStoreIndex,
-  ServiceContext,
-)
-from llama_index.llms import LlamaCPP
-from llama_index.llms.llama_utils import (
-  messages_to_prompt,
-  completion_to_prompt,
-)
-from langchain.schema import SystemMessage, HumanMessage, AIMessage
+from langchain_huggingface import HuggingFaceEndpoint
+import streamlit as st
+model_id="mistralai/Mistral-7B-Instruct-v0.3"
+def get_llm_hf_inference(model_id=model_id, max_new_tokens=128, temperature=0.1):
+    """
+    Returns a language model for HuggingFace inference.
 
-def init_page():
-    st.set_page_config(page_title="Personal Chatbot")
-    st.header("Personal Chatbot")
-    st.sidebar.title("Options")
+    Parameters:
+    - model_id (str): The ID of the HuggingFace model repository.
+    - max_new_tokens (int): The maximum number of new tokens to generate.
+    - temperature (float): The temperature for sampling from the model.
 
-def select_llm():
-    return LlamaCPP(
-        model_path="llama-2-7b-chat.Q2_K.gguf",
-        temperature=0.1,
-        max_new_tokens=500,
-        context_window=3900,
-        generate_kwargs={},
-        model_kwargs={"n_gpu_layers": 1},
-        messages_to_prompt=messages_to_prompt,
-        completion_to_prompt=completion_to_prompt,
-        verbose=True,
+    Returns:
+    - llm (HuggingFaceEndpoint): The language model for HuggingFace inference.
+    """
+    llm = HuggingFaceEndpoint(
+        repo_id=model_id,
+        max_new_tokens=max_new_tokens,
+        temperature=temperature,
+        token = os.getenv("HF_TOKEN")
     )
-
-def init_messages():
-    clear_button = st.sidebar.button("Clear Conversation", key="clear")
-    if clear_button or "messages" not in st.session_state:
-        st.session_state.messages = [
-            SystemMessage(content="You are a helpful AI assistant. Reply in markdown.")
-        ]
-
-def get_answer(llm, messages):
-    response = llm.complete(messages)
-    return response.text
-
-def main():
-    init_page()
-    llm = select_llm()
-    init_messages()
-
-    if user_input := st.chat_input("Input your question!"):
-        st.session_state.messages.append(HumanMessage(content=user_input))
-        with st.spinner("Bot is typing ..."):
-            answer = get_answer(llm, user_input)
-        st.session_state.messages.append(AIMessage(content=answer))
-
-    for message in st.session_state.get("messages", []):
-        with st.chat_message("assistant" if isinstance(message, AIMessage) else "user"):
-            st.markdown(message.content)
-
-if __name__ == "__main__":
-    main()
+    return llm
